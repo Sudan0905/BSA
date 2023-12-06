@@ -220,6 +220,11 @@ bool bsa_free(bsa* b){
             b->rows[i] = NULL; // 将指针设置为NULL
         }
     }
+    if (b->is_set != NULL) {
+        free(b->is_set);
+        b->is_set = NULL;
+    }
+    
     // 释放BSA结构体本身
     free(b);
     return true;
