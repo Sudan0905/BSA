@@ -1,0 +1,30 @@
+bsa* bsa_init(void){
+    bsa* b = malloc(sizeof(bsa));
+    if (b == NULL) {
+        return NULL; // 内存分配失败
+    }
+
+    for (int i = 0; i < BSA_ROWS; i++) {
+        b->rows[i] = NULL;            // 初始化所有行的指针为NULL
+        b->row_allocated[i] = false;  // 初始化所有行为未分配
+    }
+
+    int total_elements = (1 << BSA_ROWS);
+    b->is_set = malloc(total_elements * sizeof(bool));
+    if (b->is_set == NULL) {
+        // 如果在这里失败了也需要释放之前分配的bsa结构体
+        for (int i = 0; i < BSA_ROWS; i++) {
+            if (b->row_allocated[i]) {
+                free(b->rows[i]);
+            }
+        }
+        free(b);
+        return NULL;
+    }
+    for (int i = 0; i < total_elements; ++i) {
+        b->is_set[i] = false;
+    }
+
+    b->max_index = -1; // 初始化最大索引为-1，表示没有元素被设置
+    return b;
+}
