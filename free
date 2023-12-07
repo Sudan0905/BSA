@@ -1,2 +1,16 @@
-driverbsa_s: driver.c:93: main: Assertion `acc==6' failed.
-Aborted (core dumped)
+sieve.c:46:4: runtime error: load of null pointer of type 'int'
+ASAN:DEADLYSIGNAL
+=================================================================
+==3057==ERROR: AddressSanitizer: SEGV on unknown address 0x000000000000 (pc 0x5597d9464520 bp 0x7fff3ffbd970 sp 0x7fff3ffbd960 T0)
+==3057==The signal is caused by a READ memory access.
+==3057==Hint: address points to the zero page.
+    #0 0x5597d946451f in print /home/sudantang/BSA/sieve.c:46
+    #1 0x5597d9466df3 in bsa_foreach Alloc/alloc.c:250
+    #2 0x5597d946434f in main /home/sudantang/BSA/sieve.c:25
+    #3 0x7f35de899c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    #4 0x5597d9463f89 in _start (/home/sudantang/BSA/sieve_s+0x5f89)
+
+AddressSanitizer can not provide additional info.
+SUMMARY: AddressSanitizer: SEGV /home/sudantang/BSA/sieve.c:46 in print
+==3057==ABORTING
+
