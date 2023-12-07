@@ -1,17 +1,17 @@
-bool bsa_free(bsa* b){
-    if (b == NULL) {
-        return false; // 如果BSA指针无效，不执行任何操作
-    }
-    // 释放每一行分配的内存
-    for (int i = 0; i < BSA_ROWS; ++i) {
-        if (b->row_allocated[i]) {
-            free(b->rows[i]);  // 释放当前行
-            b->rows[i] = NULL; // 将指针设置为NULL
-        }
-    }
-    // 释放is_set分配的内存
-    free(b->is_set);
-    // 释放BSA结构体本身
-    free(b);
-    return true;
-}
+==2503==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 288 byte(s) in 1 object(s) allocated from:
+    #0 0x7fe24201fb40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
+    #1 0x5633622b9d0e in bsa_init Alloc/alloc.c:14
+    #2 0x5633622bc5e7 in test Alloc/alloc.c:258
+    #3 0x5633622b8c62 in main /home/sudantang/BSA/driver.c:11
+    #4 0x7fe240e50c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+
+Indirect leak of 4 byte(s) in 1 object(s) allocated from:
+    #0 0x7fe24201fd28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
+    #1 0x5633622ba466 in bsa_set Alloc/alloc.c:68
+    #2 0x5633622bc738 in test Alloc/alloc.c:266
+    #3 0x5633622b8c62 in main /home/sudantang/BSA/driver.c:11
+    #4 0x7fe240e50c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+
+SUMMARY: AddressSanitizer: 292 byte(s) leaked in 2 allocation(s).
