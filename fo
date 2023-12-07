@@ -1,0 +1,12 @@
+void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
+    if (func == NULL || b == NULL || acc == NULL) {
+        return; // 检查参数是否有效
+    }
+
+    for (int indx = 0; indx <= b->max_index; ++indx) {
+        int* p = bsa_get(b, indx);
+        if (p != NULL) {
+            func(p, acc);
+        }
+    }
+}
