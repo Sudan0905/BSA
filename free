@@ -1,17 +1,38 @@
-==2503==ERROR: LeakSanitizer: detected memory leaks
+bool bsa_delete(bsa* b, int indx){
+    if (b == NULL || indx < 0 || indx > b->max_index || !b->is_set[indx]) {
+        return false; // 检查BSA指针是否有效，索引是否在有效范围内，以及索引是否已被赋值
+    }
 
-Direct leak of 288 byte(s) in 1 object(s) allocated from:
-    #0 0x7fe24201fb40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
-    #1 0x5633622b9d0e in bsa_init Alloc/alloc.c:14
-    #2 0x5633622bc5e7 in test Alloc/alloc.c:258
-    #3 0x5633622b8c62 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fe240e50c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    int row = get_row_from_index(indx);
+    if (row >= BSA_ROWS || !b->row_allocated[row]) {
+        return false; // 如果行超出范围或该行尚未分配，则返回false
+    }
+    if (!b->is_set[indx]) {
+        return false;
+    }
 
-Indirect leak of 4 byte(s) in 1 object(s) allocated from:
-    #0 0x7fe24201fd28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
-    #1 0x5633622ba466 in bsa_set Alloc/alloc.c:68
-    #2 0x5633622bc738 in test Alloc/alloc.c:266
-    #3 0x5633622b8c62 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fe240e50c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    // 计算在行内的实际位置
+    int position = indx;
+    for (int i = 0; i < row; ++i) {
+        position -= (1 << i);
+    }
 
-SUMMARY: AddressSanitizer: 292 byte(s) leaked in 2 allocation(s).
+    // 删除元素：将元素值设置为0（或其他标识未使用的值）
+    b->rows[row][position] = 0;
+    b->is_set[indx] = false; // 标记该索引未被赋值
+
+    // 无论该行是否为空，都释放该行的内存
+    free(b->rows[row]);
+    b->rows[row] = NULL;
+    b->row_allocated[row] = false;
+
+    // 更新max_index为最后一个被标记的元素的索引
+    if (indx == b->max_index) {
+        while (indx >= 0 && !b->is_set[indx]) {
+            indx--;
+        }
+        b->max_index = indx;
+    }
+
+    return true;
+}
