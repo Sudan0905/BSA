@@ -1,17 +1,36 @@
-==2810==ERROR: LeakSanitizer: detected memory leaks
+bool bsa_set(bsa* b, int indx, int d){
+    if (b == NULL || indx < 0) {
+        return false; // 检查BSA指针是否有效，以及索引是否在有效范围内
+    }
 
-Direct leak of 1073741824 byte(s) in 1 object(s) allocated from:
-    #0 0x7fedcfd0eb40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
-    #1 0x559a6d6d1f07 in bsa_init Alloc/alloc.c:25
-    #2 0x559a6d6d46a9 in test Alloc/alloc.c:258
-    #3 0x559a6d6d0ce2 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fedceb3fc86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    int row = get_row_from_index(indx);
+    if (row >= BSA_ROWS) {
+        return false; // 索引超出了bsa结构的容量
+    }
 
-Direct leak of 4 byte(s) in 1 object(s) allocated from:
-    #0 0x7fedcfd0ed28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
-    #1 0x559a6d6d24e6 in bsa_set Alloc/alloc.c:68
-    #2 0x559a6d6d47fa in test Alloc/alloc.c:266
-    #3 0x559a6d6d0ce2 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fedceb3fc86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    if (b->row_allocated[row]) {
+        // 如果这个行已经分配过内存，先释放旧的内存
+        free(b->rows[row]);
+    }
 
-SUMMARY: AddressSanitizer: 1073741828 byte(s) leaked in 2 allocation(s).
+    // 分配内存
+    b->rows[row] = (int*)calloc((1 << row), sizeof(int));
+    if (b->rows[row] == NULL) {
+        return false; // 内存分配失败
+    }
+    b->row_allocated[row] = true;
+
+    // 计算行内的实际位置
+    int position = indx;
+    for (int i = 0; i < row; ++i) {
+        position -= (1 << i); // 减去前面行的总大小
+    }
+
+    b->rows[row][position] = d;
+    b->is_set[indx] = true; // 标记元素为已设置
+
+    if (indx > b->max_index) {
+        b->max_index = indx; // 更新最大索引
+    }
+    return true;
+}
