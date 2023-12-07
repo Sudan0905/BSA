@@ -1,17 +1,17 @@
-==3152==ERROR: LeakSanitizer: detected memory leaks
+void bsa_foreach(void (*func)(int* p, int* n), bsa* b, int* acc){
+    if (func == NULL || b == NULL || acc == NULL) {
+        return; // 检查参数是否有效
+    }
 
-Direct leak of 1073741824 byte(s) in 1 object(s) allocated from:
-    #0 0x7f96d7292b40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
-    #1 0x55981ce6d30b in bsa_init Alloc/alloc.c:25
-    #2 0x55981ce6f8af in test Alloc/alloc.c:253
-    #3 0x55981ce6cd08 in main /home/sudantang/BSA/sieve.c:13
-    #4 0x7f96d60c3c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+    for (int indx = 0; indx <= b->max_index; ++indx) {
+        if (b->is_set[indx]) {
+            int row = get_row_from_index(indx);
+            int position = indx;
+            for (int i = 0; i < row; ++i) {
+                position -= (1 << i);
+            }
+            func(&(b->rows[row][position]), acc);
+        }
+    }
 
-Direct leak of 4 byte(s) in 1 object(s) allocated from:
-    #0 0x7f96d7292d28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
-    #1 0x55981ce6d8ea in bsa_set Alloc/alloc.c:68
-    #2 0x55981ce6fa00 in test Alloc/alloc.c:261
-    #3 0x55981ce6cd08 in main /home/sudantang/BSA/sieve.c:13
-    #4 0x7f96d60c3c86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
-
-SUMMARY: AddressSanitizer: 1073741828 byte(s) leaked in 2 allocation(s).
+}
