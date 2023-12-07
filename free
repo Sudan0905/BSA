@@ -1,24 +1,10 @@
-==2689==ERROR: LeakSanitizer: detected memory leaks
+==2739==ERROR: LeakSanitizer: detected memory leaks
 
-Direct leak of 288 byte(s) in 1 object(s) allocated from:
-    #0 0x7fa693e4ab40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
-    #1 0x55eaf8555d8e in bsa_init Alloc/alloc.c:14
-    #2 0x55eaf85586a9 in test Alloc/alloc.c:258
-    #3 0x55eaf8554ce2 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fa692c7bc86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
+Direct leak of 4 byte(s) in 1 object(s) allocated from:
+    #0 0x7f071b859d28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
+    #1 0x5642e39fb4e6 in bsa_set Alloc/alloc.c:68
+    #2 0x5642e39fd7fa in test Alloc/alloc.c:266
+    #3 0x5642e39f9ce2 in main /home/sudantang/BSA/driver.c:11
+    #4 0x7f071a68ac86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
 
-Indirect leak of 1073741824 byte(s) in 1 object(s) allocated from:
-    #0 0x7fa693e4ab40 in __interceptor_malloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xdeb40)
-    #1 0x55eaf8555f07 in bsa_init Alloc/alloc.c:25
-    #2 0x55eaf85586a9 in test Alloc/alloc.c:258
-    #3 0x55eaf8554ce2 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fa692c7bc86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
-
-Indirect leak of 4 byte(s) in 1 object(s) allocated from:
-    #0 0x7fa693e4ad28 in __interceptor_calloc (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xded28)
-    #1 0x55eaf85564e6 in bsa_set Alloc/alloc.c:68
-    #2 0x55eaf85587fa in test Alloc/alloc.c:266
-    #3 0x55eaf8554ce2 in main /home/sudantang/BSA/driver.c:11
-    #4 0x7fa692c7bc86 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21c86)
-
-SUMMARY: AddressSanitizer: 1073742116 byte(s) leaked in 3 allocation(s).
+SUMMARY: AddressSanitizer: 4 byte(s) leaked in 1 allocation(s).
